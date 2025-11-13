@@ -10,6 +10,8 @@ import { EventsPage } from '../modules/events';
 import { ProfilePage } from '../modules/profile';
 import { NetworkingPage } from '../modules/networking';
 
+import { AdminPage } from '../modules/admin';
+
 // Components
 import ProtectedRoute from './ProtectedRoute';
 
@@ -70,11 +72,7 @@ const AppRouter: React.FC = () => {
           path="/admin"
           element={
             <ProtectedRoute requiredRole="organizer">
-              <div style={{ padding: '20px' }}>
-                <h1>Panel de Administración</h1>
-                <p>Esta sección es solo para organizadores</p>
-                <p>Aquí podrás gestionar eventos y ver reportes</p>
-              </div>
+                 <AdminPage />
             </ProtectedRoute>
           }
         />
