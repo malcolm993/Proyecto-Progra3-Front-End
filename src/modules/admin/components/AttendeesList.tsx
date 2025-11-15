@@ -11,6 +11,12 @@ export const AttendeesList: React.FC<AttendeesListProps> = ({ eventId }) => {
   const [loading, setLoading] = useState(false);
   const [selectedEvent, setSelectedEvent] = useState(eventId);
 
+  useEffect(() => {
+    if(eventId && eventId !== selectedEvent) {
+      setSelectedEvent(eventId);
+    }
+  }, [eventId]);
+
   const loadAttendees = async (eventId: string) => {
     try {
       setLoading(true);
@@ -66,7 +72,7 @@ export const AttendeesList: React.FC<AttendeesListProps> = ({ eventId }) => {
             <div style={{ overflowX: 'auto' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse' }}>
                 <thead>
-                  <tr style={{ backgroundColor: '#f8f9fa' }}>
+                  <tr style={{ backgroundColor: '#f56f16ff' }}>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Nombre</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Email</th>
                     <th style={{ padding: '12px', textAlign: 'left', borderBottom: '1px solid #dee2e6' }}>Empresa</th>
@@ -76,7 +82,7 @@ export const AttendeesList: React.FC<AttendeesListProps> = ({ eventId }) => {
                 </thead>
                 <tbody>
                   {attendees.map((attendee) => (
-                    <tr key={attendee.id} style={{ borderBottom: '1px solid #f1f3f4' }}>
+                    <tr key={attendee.id} style={{ borderBottom: '1px solid #e99517ff' }}>
                       <td style={{ padding: '12px' }}>{attendee.user?.name || 'N/A'}</td>
                       <td style={{ padding: '12px' }}>{attendee.user?.email || 'N/A'}</td>
                       <td style={{ padding: '12px' }}>{attendee.user?.company || 'N/A'}</td>

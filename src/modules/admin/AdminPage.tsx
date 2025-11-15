@@ -46,9 +46,9 @@ const AdminPage: React.FC = () => {
   }
 
   const tabs = [
-    { id: 'dashboard' as const, label: '📊 Dashboard', icon: '📊' },
-    { id: 'events' as const, label: '📅 Mis Eventos', icon: '📅' },
-    { id: 'attendees' as const, label: '👥 Asistentes', icon: '👥' }
+    { id: 'dashboard' as const, label: 'Dashboard', icon: '📊' },
+    { id: 'events' as const, label: 'Mis Eventos', icon: '📅' },
+    { id: 'attendees' as const, label: 'Asistentes', icon: '👥' }
   ];
 
   return (

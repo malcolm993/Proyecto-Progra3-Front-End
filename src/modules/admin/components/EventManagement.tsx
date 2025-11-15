@@ -64,20 +64,7 @@ export const EventManagement: React.FC<EventManagementProps> = ({
               </div>
               
               <div style={{ display: 'flex', gap: '8px', flexDirection: 'column' }}>
-                <Button
-                  variant="primary"
-                  size="small"
-                  onClick={() => onExportAttendees(event.id, 'csv')}
-                >
-                  📥 Exportar CSV
-                </Button>
-                <Button
-                  variant="secondary"
-                  size="small"
-                  onClick={() => onExportAttendees(event.id, 'pdf')}
-                >
-                  📥 Exportar PDF
-                </Button>
+ 
                 <Button
                   variant="secondary"
                   size="small"
