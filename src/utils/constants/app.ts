@@ -1,20 +1,41 @@
-//configuracion general de la aplicacion
-
-// Configuración general de la aplicación
+// Configuración general de la aplicación - VERSIÓN SEGURA
 export const APP_CONFIG = {
-  // Información de la app
+  // Información de la app (EXISTENTE)
   NAME: 'Networking & INSPTech Events',
   VERSION: '1.0.0',
   DESCRIPTION: 'Plataforma de eventos de networking empresarial',
   
-  // Paginación
+  // 🔥 NUEVO pero COMPATIBLE - No rompe código existente
+  ROLES: {
+    PARTICIPANT: 'participant',
+    ORGANIZER: 'organizer',
+    ADMIN: 'admin',
+  } as const,
+  
+  EVENT_TYPES: {
+    TALK: 'talk',
+    FAIR: 'fair', 
+    BUSINESS_ROUND: 'business_round',
+    NETWORKING: 'networking',
+  } as const,
+  
+  INTERESTS: {
+    TECHNOLOGY: 'technology',
+    BUSINESS: 'business',
+    MARKETING: 'marketing',
+    FINANCE: 'finance',
+    HEALTHCARE: 'healthcare',
+    EDUCATION: 'education',
+    OTHER: 'other',
+  } as const,
+
+  // EXISTENTE - sin cambios
   PAGINATION: {
     DEFAULT_PAGE_SIZE: 10,
     MAX_PAGE_SIZE: 100,
     PAGE_SIZES: [10, 25, 50, 100] as const
   },
   
-  // Validación
   VALIDATION: {
     USER: {
       MAX_NAME_LENGTH: 100,
@@ -25,18 +46,20 @@ export const APP_CONFIG = {
       MAX_TITLE_LENGTH: 100,
       MAX_DESCRIPTION_LENGTH: 1000,
       MAX_LOCATION_LENGTH: 255,
-      MAX_SPEAKER_LENGTH: 2,
+      MAX_SPEAKERS: 10, // 🔥 Corregido
       MAX_TAGS: 10
     }
   },
   
-  // Tiempos y delays
   TIMING: {
-    API_TIMEOUT: 10000, // 10 segundos
-    DEBOUNCE_DELAY: 300, // 300ms para búsquedas
-    TOAST_DURATION: 5000 // 5 segundos para notificaciones
+    API_TIMEOUT: 10000,
+    DEBOUNCE_DELAY: 300,
+    TOAST_DURATION: 5000
   }
 } as const;
 
-// Tipo para TypeScript
-export type PageSize = typeof APP_CONFIG.PAGINATION.PAGE_SIZES[number];
+// Tipos NUEVOS - No afectan código existente
+export type UserRole = typeof APP_CONFIG.ROLES[keyof typeof APP_CONFIG.ROLES];
+export type EventType = typeof APP_CONFIG.EVENT_TYPES[keyof typeof APP_CONFIG.EVENT_TYPES];
+export type InterestCategory = typeof APP_CONFIG.INTERESTS[keyof typeof APP_CONFIG.INTERESTS];
+export type PageSize = typeof APP_CONFIG.PAGINATION.PAGE_SIZES[number]; // EXISTENTE
