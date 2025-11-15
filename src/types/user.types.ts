@@ -1,4 +1,4 @@
-export type UserRole = 'organizer' | 'participant';
+import type { UserRole , InterestCategory} from '../utils/constants/app';
 
 export interface User {
   id: string;
@@ -7,7 +7,7 @@ export interface User {
   role: UserRole;
   company?: string;
   industry?: string;
-  interests?: string[];
+  interests: InterestCategory[];
   avatar?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -25,5 +25,11 @@ export interface UserRegisterData {
   role: UserRole;
   company?: string;
   industry?: string;
-  interests?: string[];
+  interests: InterestCategory[];
+}
+
+export interface AuthUser {
+  user: User;
+  token: string;
+  refreshToken?: string; // Opcional para futura implementación
 }

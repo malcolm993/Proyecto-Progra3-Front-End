@@ -1,13 +1,13 @@
 import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { User, UserLoginData, UserRegisterData } from '../types/user.types';
+import type { User, UserLoginData, UserRegisterData, AuthUser } from '../types/user.types';
 import { authService } from '../services/auth/authService';
 
 interface AuthContextType {
   user: User | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (loginData: UserLoginData) => Promise<void>;
-  register: (registerData: UserRegisterData) => Promise<void>;
+  login: (loginData: UserLoginData) => Promise<AuthUser>;        // ✅ Corregido
+  register: (registerData: UserRegisterData) => Promise<AuthUser>; // ✅ Corregido
   logout: () => void;
   updateUser: (userData: Partial<User>) => void;
 }
@@ -49,8 +49,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const userData = localStorage.getItem('userData');
 
       if (token && userData) {
-        const parsedUser: User = JSON.parse(userData);
-        setUser(parsedUser);
+        // ✅ Verificar token válido con el backend
+        const response = await authService.getCurrentUser();
+        if (response.success && response.data) {
+          setUser(response.data);
+        } else {
+          // Token inválido - limpiar
+          localStorage.removeItem('authToken');
+          localStorage.removeItem('userData');
+        }
       }
     } catch (error) {
       console.error('Error checking auth status:', error);
@@ -61,28 +68,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
-  const login = async (loginData: UserLoginData): Promise<void> => {
+  const login = async (loginData: UserLoginData): Promise<AuthUser> => {
     try {
       setIsLoading(true);
 
-      // ✅ Usar el service en lugar del mock directo
+      // ✅ Usar el service
       const response = await authService.login(loginData);
 
       if (response.success && response.data) {
-        const mockToken = 'mock-jwt-token-' + Date.now();
-        localStorage.setItem('authToken', mockToken);
-        localStorage.setItem('userData', JSON.stringify(response.data));
-        setUser(response.data);
+        const { user: userData, token } = response.data;
+        
+        // ✅ CORREGIDO: Guardar token y solo datos de usuario
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setUser(userData);
+        
+        return response.data; // ✅ Retorna AuthUser completo
+      } else {
+        throw new Error(response.message || 'Error en el login');
       }
     } catch (error) {
       console.error('Login error:', error);
-      throw new Error(getErrorMessage(error)); // ✅ CORREGIDO
+      throw new Error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
   };
 
-  const register = async (registerData: UserRegisterData): Promise<void> => {
+  const register = async (registerData: UserRegisterData): Promise<AuthUser> => {
     try {
       setIsLoading(true);
       
@@ -90,23 +103,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const response = await authService.register(registerData);
       
       if (response.success && response.data) {
-        const mockToken = 'mock-jwt-token-' + Date.now();
-        localStorage.setItem('authToken', mockToken);
-        localStorage.setItem('userData', JSON.stringify(response.data));
-        setUser(response.data);
+        const { user: userData, token } = response.data;
+        
+        // ✅ CORREGIDO: Guardar token y solo datos de usuario
+        localStorage.setItem('authToken', token);
+        localStorage.setItem('userData', JSON.stringify(userData));
+        setUser(userData);
+        
+        return response.data; // ✅ Retorna AuthUser completo
+      } else {
+        throw new Error(response.message || 'Error en el registro');
       }
     } catch (error) {
       console.error('Register error:', error);
-      throw new Error(getErrorMessage(error)); // ✅ CORREGIDO
+      throw new Error(getErrorMessage(error));
     } finally {
       setIsLoading(false);
     }
   };
 
   const logout = (): void => {
-    localStorage.removeItem('authToken');
-    localStorage.removeItem('userData');
-    setUser(null);
+    try {
+      // ✅ Intentar logout en el servidor (pero no bloquear si falla)
+      authService.logout().catch(console.error);
+    } finally {
+      // ✅ Siempre limpiar localStorage y estado
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('userData');
+      setUser(null);
+    }
   };
 
   const updateUser = (userData: Partial<User>): void => {
@@ -127,13 +152,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     updateUser,
   };
 
-  // ✅ FALTABA ESTE RETURN
   return (
     <AuthContext.Provider value={contextValue}>
       {children}
     </AuthContext.Provider>
   );
-}; // ✅ FALTABA ESTE CIERRE
+};
 
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);

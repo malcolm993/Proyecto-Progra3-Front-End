@@ -1,4 +1,4 @@
-export type EventType = 'talk' | 'fair' | 'business_round';
+import type { EventType, InterestCategory } from "../utils/constants/app";
 
 export interface Event {
   id: string;
@@ -19,6 +19,7 @@ export interface Event {
   isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
+  interests: InterestCategory[];
 }
 
 export interface EventCreateData {
@@ -33,6 +34,7 @@ export interface EventCreateData {
   endTime: Date;
   maxParticipants?: number;
   tags: string[];
+  interests: InterestCategory[];
 }
 
 export interface EventFilters {
@@ -41,4 +43,5 @@ export interface EventFilters {
   dateTo?: Date;
   industry?: string;
   query?: string;
+  interests?: InterestCategory[];
 }

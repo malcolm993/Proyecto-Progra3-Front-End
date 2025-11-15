@@ -1,107 +1,54 @@
 import baseApi, { handleApiResponse, handleApiError } from '../api/baseApi';
-import type { User, UserLoginData, UserRegisterData } from '../../types/user.types';
+import type { User, UserLoginData, UserRegisterData, AuthUser } from '../../types/user.types';
 import type { ApiResponse } from '../../types/api.types';
+import { ROUTES } from '../../utils/constants/routes';
 
-// TODO: Reemplazar con endpoints reales cuando tengas el backend
-const MOCK_DELAY = 1000;
+// Claves para localStorage
+const AUTH_TOKEN_KEY = 'authToken';
+const USER_DATA_KEY = 'userData';
 
 export const authService = {
   // Login de usuario
-  async login(loginData: UserLoginData): Promise<ApiResponse<User>> {
+  async login(loginData: UserLoginData): Promise<ApiResponse<AuthUser>> {
     try {
-      // TODO: Reemplazar con llamada real
-      // return await baseApi.post('/auth/login', loginData);
+      const response = await baseApi.post(ROUTES.API.AUTH.LOGIN, loginData);
+      const result = handleApiResponse<AuthUser>(response);
       
-      // Mock por ahora
-      await new Promise(resolve => setTimeout(resolve, MOCK_DELAY));
+      // ✅ Guardar token y datos de usuario en localStorage
+      if (result.success && result.data) {
+        localStorage.setItem(AUTH_TOKEN_KEY, result.data.token);
+        localStorage.setItem(USER_DATA_KEY, JSON.stringify(result.data.user));
+      }
       
-      const mockUser: User = loginData.email.includes('organizador') 
-        ? {
-            id: '1',
-            email: loginData.email,
-            name: 'Organizador Demo',
-            role: 'organizer',
-            company: 'Empresa Organizadora SA',
-            industry: 'Tecnología',
-            interests: ['networking', 'innovación'],
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          }
-        : {
-            id: '2',
-            email: loginData.email,
-            name: 'Participante Demo',
-            role: 'participant',
-            company: 'Otra Empresa SRL',
-            industry: 'Marketing',
-            interests: ['desarrollo profesional', 'ferias'],
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          };
-
-      return {
-        data: mockUser,
-        message: 'Login exitoso',
-        success: true,
-        statusCode: 200,
-      };
+      return result;
     } catch (error) {
       throw handleApiError(error);
     }
   },
 
   // Registro de usuario
-  async register(registerData: UserRegisterData): Promise<ApiResponse<User>> {
+  async register(registerData: UserRegisterData): Promise<ApiResponse<AuthUser>> {
     try {
-      // TODO: Reemplazar con llamada real
-      // return await baseApi.post('/auth/register', registerData);
+      const response = await baseApi.post(ROUTES.API.AUTH.REGISTER, registerData);
+      const result = handleApiResponse<AuthUser>(response);
       
-      await new Promise(resolve => setTimeout(resolve, MOCK_DELAY));
+      // ✅ Guardar token y datos de usuario en localStorage
+      if (result.success && result.data) {
+        localStorage.setItem(AUTH_TOKEN_KEY, result.data.token);
+        localStorage.setItem(USER_DATA_KEY, JSON.stringify(result.data.user));
+      }
       
-      const newUser: User = {
-        id: Date.now().toString(),
-        email: registerData.email,
-        name: registerData.name,
-        role: registerData.role,
-        company: registerData.company,
-        industry: registerData.industry,
-        interests: registerData.interests || [],
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-
-      return {
-        data: newUser,
-        message: 'Registro exitoso',
-        success: true,
-        statusCode: 201,
-      };
+      return result;
     } catch (error) {
       throw handleApiError(error);
     }
   },
 
-  // Verificar token (me)
+  // Verificar token (me) - ✅ Este sí retorna solo User
   async getCurrentUser(): Promise<ApiResponse<User>> {
     try {
-      // TODO: Reemplazar con llamada real
-      // return await baseApi.get('/auth/me');
-      
-      await new Promise(resolve => setTimeout(resolve, MOCK_DELAY));
-      
-      const userData = localStorage.getItem('userData');
-      if (!userData) {
-        throw new Error('No user data found');
-      }
-
-      const user: User = JSON.parse(userData);
-      
-      return {
-        data: user,
-        message: 'Usuario obtenido',
-        success: true,
-        statusCode: 200,
-      };
+      const response = await baseApi.get(ROUTES.API.AUTH.ME);
+      return handleApiResponse<User>(response);
     } catch (error) {
       throw handleApiError(error);
     }
@@ -110,19 +57,34 @@ export const authService = {
   // Logout
   async logout(): Promise<ApiResponse<void>> {
     try {
-      // TODO: Reemplazar con llamada real si el backend necesita saber del logout
-      // return await baseApi.post('/auth/logout');
+      const response = await baseApi.post(ROUTES.API.AUTH.LOGOUT);
       
-      await new Promise(resolve => setTimeout(resolve, MOCK_DELAY));
+      // ✅ Limpiar localStorage independientemente de la respuesta del servidor
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(USER_DATA_KEY);
       
-      return {
-        data: undefined,
-        message: 'Logout exitoso',
-        success: true,
-        statusCode: 200,
-      };
+      return handleApiResponse<void>(response);
     } catch (error) {
+      // ✅ Limpiar localStorage incluso si falla la llamada al servidor
+      localStorage.removeItem(AUTH_TOKEN_KEY);
+      localStorage.removeItem(USER_DATA_KEY);
       throw handleApiError(error);
     }
   },
+
+  // ✅ OPCIONAL: Método para refrescar token
+  async refreshToken(): Promise<ApiResponse<{ token: string }>> {
+    try {
+      const response = await baseApi.post(ROUTES.API.AUTH.REFRESH);
+      const result = handleApiResponse<{ token: string }>(response);
+      
+      if (result.success && result.data) {
+        localStorage.setItem(AUTH_TOKEN_KEY, result.data.token);
+      }
+      
+      return result;
+    } catch (error) {
+      throw handleApiError(error);
+    }
+  }
 };
