@@ -4,21 +4,21 @@ export const APP_CONFIG = {
   NAME: 'Networking & INSPTech Events',
   VERSION: '1.0.0',
   DESCRIPTION: 'Plataforma de eventos de networking empresarial',
-  
+
   // 🔥 NUEVO pero COMPATIBLE - No rompe código existente
   ROLES: {
     PARTICIPANT: 'participant',
     ORGANIZER: 'organizer',
     ADMIN: 'admin',
   } as const,
-  
+
   EVENT_TYPES: {
     TALK: 'talk',
-    FAIR: 'fair', 
+    FAIR: 'fair',
     BUSINESS_ROUND: 'business_round',
     NETWORKING: 'networking',
   } as const,
-  
+
   INTERESTS: {
     TECHNOLOGY: 'technology',
     BUSINESS: 'business',
@@ -35,7 +35,7 @@ export const APP_CONFIG = {
     MAX_PAGE_SIZE: 100,
     PAGE_SIZES: [10, 25, 50, 100] as const
   },
-  
+
   VALIDATION: {
     USER: {
       MAX_NAME_LENGTH: 100,
@@ -50,12 +50,20 @@ export const APP_CONFIG = {
       MAX_TAGS: 10
     }
   },
-  
+
   TIMING: {
     API_TIMEOUT: 10000,
     DEBOUNCE_DELAY: 300,
     TOAST_DURATION: 5000
+  },
+
+  EVENT_STATUS: {
+    DRAFT: 'draft',
+    PUBLISHED: 'published',
+    CANCELLED: 'cancelled',
+    COMPLETED: 'completed',
   }
+
 } as const;
 
 // Tipos NUEVOS - No afectan código existente
@@ -63,3 +71,4 @@ export type UserRole = typeof APP_CONFIG.ROLES[keyof typeof APP_CONFIG.ROLES];
 export type EventType = typeof APP_CONFIG.EVENT_TYPES[keyof typeof APP_CONFIG.EVENT_TYPES];
 export type InterestCategory = typeof APP_CONFIG.INTERESTS[keyof typeof APP_CONFIG.INTERESTS];
 export type PageSize = typeof APP_CONFIG.PAGINATION.PAGE_SIZES[number]; // EXISTENTE
+export type EventStatus = typeof APP_CONFIG.EVENT_STATUS[keyof typeof APP_CONFIG.EVENT_STATUS];

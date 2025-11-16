@@ -1,4 +1,5 @@
 import type { Event, Registration } from '../../types';
+import type { UserRole, EventType, EventStatus } from '../../utils/constants'; // ✅ Corregido
 
 // Types específicos para el panel de administración
 export interface AdminStats {
@@ -6,14 +7,19 @@ export interface AdminStats {
   totalParticipants: number;
   upcomingEvents: number;
   averageAttendance: number;
+  activeRegistrations: number;  
 }
 
 export interface EventWithAttendees extends Event {
   attendees: Registration[];
 }
 
-export interface ExportOptions {
-  format: 'csv' | 'pdf';
-  includeContactInfo: boolean;
-  eventId?: string;
+export interface UserManagementFilters {
+  role?: UserRole;
+  search?: string; 
+}
+
+export interface EventManagementFilters {
+  type?: EventType;
+  status?: EventStatus;
 }

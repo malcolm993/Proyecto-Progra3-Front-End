@@ -2,6 +2,7 @@ import React from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 import { Button } from '../common';
+import { ROUTES } from '../../utils/constants/routes';
 
 const Header: React.FC = () => {
   const { user, isAuthenticated, logout } = useAuth();
@@ -10,7 +11,7 @@ const Header: React.FC = () => {
 
   const handleLogout = () => {
     logout();
-    navigate('/');
+    navigate(ROUTES.HOME);
   };
 
   const isActiveRoute = (path: string) => {
@@ -18,17 +19,17 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header style={{ 
-      background: '#001529', 
-      color: 'white', 
+    <header style={{
+      background: '#001529',
+      color: 'white',
       padding: '0 20px',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       height: '64px'
     }}>
-      <Link to="/" style={{ 
-        color: 'white', 
+      <Link to={ROUTES.HOME} style={{
+        color: 'white',
         textDecoration: 'none',
         fontSize: '20px',
         fontWeight: 'bold'
@@ -39,51 +40,64 @@ const Header: React.FC = () => {
       <nav style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
         {isAuthenticated ? (
           <>
-            <Link 
-              to="/events" 
-              style={{ 
-                color: isActiveRoute('/events') ? '#1890ff' : 'white', 
+            <Link
+              to={ROUTES.EVENTS}
+              style={{
+                color: isActiveRoute(ROUTES.EVENTS) ? '#1890ff' : 'white',
                 textDecoration: 'none',
                 padding: '8px 12px',
                 borderRadius: '4px',
-                backgroundColor: isActiveRoute('/events') ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+                backgroundColor: isActiveRoute(ROUTES.EVENTS) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
               }}
             >
               Eventos
             </Link>
-            
-            <Link 
-              to="/profile" 
-              style={{ 
-                color: isActiveRoute('/profile') ? '#1890ff' : 'white', 
+
+            <Link
+              to={ROUTES.PROFILE}
+              style={{
+                color: isActiveRoute(ROUTES.PROFILE) ? '#1890ff' : 'white',
                 textDecoration: 'none',
                 padding: '8px 12px',
                 borderRadius: '4px',
-                backgroundColor: isActiveRoute('/profile') ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+                backgroundColor: isActiveRoute(ROUTES.PROFILE) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
               }}
             >
               Perfil
             </Link>
-            
-            {user?.role === 'organizer' && (
-              <Link 
-                to="/admin" 
-                style={{ 
-                  color: isActiveRoute('/admin') ? '#1890ff' : 'white', 
+
+            {(user?.role === 'organizer' || user?.role === 'admin') && (
+              <Link
+                to={ROUTES.ADMIN.DASHBOARD}
+                style={{
+                  color: isActiveRoute(ROUTES.ADMIN.DASHBOARD) ? '#1890ff' : 'white',
                   textDecoration: 'none',
                   padding: '8px 12px',
                   borderRadius: '4px',
-                  backgroundColor: isActiveRoute('/admin') ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+                  backgroundColor: isActiveRoute(ROUTES.ADMIN.DASHBOARD) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
                 }}
               >
                 Admin
               </Link>
             )}
-            
+
+            <Link
+              to={ROUTES.NETWORKING}
+              style={{
+                color: isActiveRoute(ROUTES.NETWORKING) ? '#1890ff' : 'white',
+                textDecoration: 'none',
+                padding: '8px 12px',
+                borderRadius: '4px',
+                backgroundColor: isActiveRoute(ROUTES.NETWORKING) ? 'rgba(24, 144, 255, 0.1)' : 'transparent'
+              }}
+            >
+              Networking
+            </Link>
+
             <span style={{ color: '#ccc' }}>Hola, {user?.name}</span>
-            
-            <Button 
-              variant="secondary" 
+
+            <Button
+              variant="secondary"
               size="small"
               onClick={handleLogout}
             >
@@ -92,19 +106,19 @@ const Header: React.FC = () => {
           </>
         ) : (
           <>
-            <Link 
-              to="/auth/login" 
-              style={{ 
-                color: isActiveRoute('/auth/login') ? '#1890ff' : 'white', 
-                textDecoration: 'none' 
+            <Link
+              to={ROUTES.LOGIN}
+              style={{
+                color: isActiveRoute(ROUTES.LOGIN) ? '#1890ff' : 'white',
+                textDecoration: 'none'
               }}
             >
               Ingresar
             </Link>
-            <Button 
-              variant="primary" 
+            <Button
+              variant="primary"
               size="small"
-              onClick={() => navigate('/auth/register')}
+              onClick={() => navigate(ROUTES.REGISTER)}
             >
               Registrarse
             </Button>
